@@ -35,14 +35,12 @@ jobs:
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0" "platforms;android-34" || true
 
     - name: Extract and Build
-  run: |
-    ...
-    cp -r VoiceAssistant/* .
-    ...
+      run: |
         export ANDROID_HOME=/usr/local/lib/android/sdk
         export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
         echo "sdk.dir=$ANDROID_HOME" > local.properties
         unzip VoiceAssistant.zip
+        rm -rf build.gradle.kts settings.gradle.kts gradle.properties gradle
         cp -r VoiceAssistant/* .
         curl -L https://services.gradle.org/distributions/gradle-8.2-bin.zip -o gradle.zip
         unzip gradle.zip
