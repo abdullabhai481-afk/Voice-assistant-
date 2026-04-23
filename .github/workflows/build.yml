@@ -17,15 +17,27 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
-        
+
     - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-      with:
-        api-level: 34
-        build-tools: 34.0.0
+      run: |
+        mkdir -p $HOME/Android/Sdk/cmdline-tools
+        cd $HOME/Android/Sdk/cmdline-tools
+        curl -L https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -o cmdline-tools.zip
+        unzip -o cmdline-tools.zip
+        mv cmdline-tools latest
+        echo "sdk.dir=$HOME/Android/Sdk" > $HOME/local.properties
+        
+    - name: Accept Licenses
+      run: |
+        yes | $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+        
+    - name: Install Build Tools
+      run: |
+        $HOME/Android/Sdk/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
     - name: Extract and Build
       run: |
+        export ANDROID_HOME=$HOME/Android/Sdk
         unzip VoiceAssistant.zip
         cp -r VoiceAssistant/* .
         curl -L https://services.gradle.org/distributions/gradle-8.2-bin.zip -o gradle.zip
